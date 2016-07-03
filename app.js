@@ -204,7 +204,8 @@ function receivedMessage(event) {
     // If we receive a text message, check to see if it matches any special
     // keywords and send back the corresponding example. Otherwise, just echo
     // the text we received.
-    switch (messageText) {
+	  /*
+      switch (messageText) {
       case 'image':
         sendImageMessage(senderID);
         break;
@@ -221,9 +222,30 @@ function receivedMessage(event) {
         sendReceiptMessage(senderID);
         break;
 
+      case 'time':
+	  sendTime(senderID);
+	  break;
+
+      case 'date':
+	  sendDate(senderID);
+	  break;
+
+      case 'date and time':
+	  sendDateTime(senderID);
+	  break;
+
       default:
-        sendTextMessage(senderID, messageText);
+      sendTextMessage(senderID, messageText);
     }
+	  */
+      if (messageText.indexOf("date") != -1 && messageText.indexOf("time") != -1)
+	  sendDateTime(senderID);
+      else if (messageText.indexOf("date") != -1)
+	  sendDate(senderID);
+      else if (messageText.indexOf("time") != -1)
+	  sendTime(senderID);
+      else
+	  sendTextMessage(senderID, messageText);
   } else if (messageAttachments) {
     sendTextMessage(senderID, "Message with attachment received");
   }
@@ -313,7 +335,58 @@ function sendTextMessage(recipientId, messageText) {
       id: recipientId
     },
     message: {
-      text: messageText
+      text: "usage:\n\ndate                  # get date\ntime                  # get time\ndate and time   # WDYT ?"
+    }
+  };
+
+  callSendAPI(messageData);
+}
+
+/*
+ * Send a text message using the Send API.
+ *
+ */
+function sendTime(recipientId, messageText) {
+  var messageData = {
+    recipient: {
+      id: recipientId
+    },
+    message: {
+	text: new Date().getHours() + ":" + new Date().getMinutes() + ":" + new Date().getSeconds()
+    }
+  };
+
+  callSendAPI(messageData);
+}
+
+/*
+ * Send a text message using the Send API.
+ *
+ */
+function sendDate(recipientId, messageText) {
+  var messageData = {
+    recipient: {
+      id: recipientId
+    },
+    message: {
+      text: new Date().toDateString()
+    }
+  };
+
+  callSendAPI(messageData);
+}
+
+/*
+ * Send a text message using the Send API.
+ *
+ */
+function sendDateTime(recipientId, messageText) {
+  var messageData = {
+    recipient: {
+      id: recipientId
+    },
+    message: {
+      text: new Date().toDateString() + " - " + new Date().getHours() + ":" + new Date().getMinutes() + ":" + new Date().getSeconds()
     }
   };
 
